@@ -1,35 +1,36 @@
-
-
-
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
+# Load drug effectiveness data
+data_file = "drug_effectiveness_data.csv"
+drug_df = pd.read_csv(data_file)
 
-file_path = "drug_effectiveness_data.csv"
-df = pd.read_csv(file_path)
+# Extract actual and predicted classifications
+actual_classes = drug_df["True_Class"]
+predicted_classes = drug_df["Predicted_Class"]
 
+# Generate confusion matrix
+conf_matrix = confusion_matrix(actual_classes, predicted_classes, labels=["Effective", "Not Effective"])
 
-y_true = df["True_Class"]
-y_pred = df["Predicted_Class"]
+# Display evaluation metrics
+print(f"Confusion Matrix:\n{conf_matrix}\n")
+print(f"Accuracy Score: {accuracy_score(actual_classes, predicted_classes):.2f}\n")
+print(f"Classification Report:\n{classification_report(actual_classes, predicted_classes)}\n")
 
+# Function to plot confusion matrix
+def display_confusion_matrix(matrix, title="Confusion Matrix"):
+    """Generates a heatmap visualization of the confusion matrix."""
+    plt.figure(figsize=(6, 4))
+    sns.heatmap(matrix, annot=True, fmt="d", cmap="Blues",
+                xticklabels=["Effective", "Not Effective"],
+                yticklabels=["Effective", "Not Effective"])
+    plt.xlabel("Predicted Label")
+    plt.ylabel("Actual Label")
+    plt.title(title)
+    plt.show()
 
-cm = confusion_matrix(y_true, y_pred, labels=["Effective", "Not Effective"])
-
-
-print("Confusion Matrix:\n", cm)
-
-
-print("\nAccuracy Score:", accuracy_score(y_true, y_pred))
-print("\nClassification Report:\n", classification_report(y_true, y_pred))
-
-# Plot confusion matrix
-plt.figure(figsize=(6, 4))
-sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Effective", "Not Effective"], yticklabels=["Effective", "Not Effective"])
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-plt.title("Confusion Matrix")
-plt.show()
+# Visualize the confusion matrix
+display_confusion_matrix(conf_matrix)
